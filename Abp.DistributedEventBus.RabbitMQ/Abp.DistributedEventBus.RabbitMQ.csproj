@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Authors>wuyi</Authors>
+    <Company />
+    <Product />
+    <PackageProjectUrl>https://github.com/wuyi6216/Abp.DistributedEventBus</PackageProjectUrl>
+    <Description>Use RabbitMQ for Abp.DistributedEventBus</Description>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Abp.DistributedEventBus\Abp.DistributedEventBus.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Commons" Version="0.4.0.1347" />
+    <PackageReference Include="Commons.Pool" Version="0.4.0.1347" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.0" />
+  </ItemGroup>
+</Project>
