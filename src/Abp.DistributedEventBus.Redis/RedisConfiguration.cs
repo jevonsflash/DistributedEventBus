@@ -31,8 +31,8 @@ namespace Abp.DistributedEventBus.Redis
         public IRedisConfiguration Configure(IRedisSetting setting)
         {
             _configuration.IocManager.IocContainer.Register(
-                  Component.For<IDistributedEventPublisher>()
-                     .ImplementedBy<RedisDistributedEventPublisher>()
+                  Component.For<IDistributedEventProducer>()
+                     .ImplementedBy<RedisDistributedEventProducer>()
                      .DependsOn(Castle.MicroKernel.Registration.Dependency.OnValue<IRedisSetting>(setting))
                      .Named(Guid.NewGuid().ToString())
                      .LifestyleSingleton()

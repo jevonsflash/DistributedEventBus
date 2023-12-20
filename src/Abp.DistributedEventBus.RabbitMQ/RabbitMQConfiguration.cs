@@ -30,8 +30,8 @@ namespace Abp.DistributedEventBus.RabbitMQ
         public IRabbitMQConfiguration Configure(IRabbitMQSetting setting)
         {
             _configuration.IocManager.IocContainer.Register(
-                 Component.For<IDistributedEventPublisher>()
-                    .ImplementedBy<RabbitMQDistributedEventPublisher>()
+                 Component.For<IDistributedEventProducer>()
+                    .ImplementedBy<RabbitMQDistributedEventProducer>()
                     .DependsOn(Castle.MicroKernel.Registration.Dependency.OnValue<IRabbitMQSetting>(setting))
                     .Named(Guid.NewGuid().ToString())
                     .LifestyleSingleton()

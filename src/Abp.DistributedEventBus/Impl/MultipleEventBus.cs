@@ -21,6 +21,8 @@ using Castle.MicroKernel;
 using Abp.Reflection;
 using System.Text.RegularExpressions;
 using Castle.MicroKernel.Registration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Abp.DistributedEventBus
 {
@@ -28,8 +30,9 @@ namespace Abp.DistributedEventBus
     {
         public ILogger Logger { get; set; }
 
+        private const string PayloadKey = "payload";
         private readonly ITypeFinder typeFinder;
-        private readonly IDistributedEventPublisher _publisher;
+        private readonly IDistributedEventProducer _publisher;
         private readonly IDistributedEventSubscriber _subscriber;
         private readonly IDistributedEventTopicSelector _topicSelector;
         private readonly IDistributedEventSerializer _remoteEventSerializer;
@@ -38,7 +41,7 @@ namespace Abp.DistributedEventBus
 
         public MultipleEventBus(
             ITypeFinder typeFinder,
-            IDistributedEventPublisher publisher,
+            IDistributedEventProducer publisher,
             IDistributedEventSubscriber subscriber,
             IDistributedEventTopicSelector topicSelector,
             IDistributedEventSerializer remoteEventSerializer
@@ -301,7 +304,11 @@ namespace Abp.DistributedEventBus
                 }
             }
 
-            if (!(typeof(DistributedEventBusEvent) == eventType || typeof(DistributedEventBusEvent).IsAssignableFrom(eventType)))
+            if (!(typeof(DistributedEventBusEvent) == eventType
+               || typeof(DistributedEventBusEvent).IsAssignableFrom(eventType)
+               || typeof(DistributedEventMessageHandleExceptionData) == eventType
+               || typeof(DistributedEventHandleExceptionData) == eventType
+                ))
             {
                 if (typeof(DistributedEventArgs) != eventType)
                 {
@@ -477,7 +484,7 @@ namespace Abp.DistributedEventBus
             {
                 var payloadDictionary = new Dictionary<string, object>
                         {
-                            { "payload", eventData }
+                            { PayloadKey, eventData }
                         };
                 var distributedeventData = new DistributedEventData(eventType.ToString(), payloadDictionary);
                 Publish(distributedeventData);
@@ -713,29 +720,46 @@ namespace Abp.DistributedEventBus
                         var type2 = match.Groups[2].Value;
 
                         var localTriggerType = typeFinder.Find(c => c.FullName == type).FirstOrDefault();
-                        if (localTriggerType != null)
-                        {
-                            var genericType = typeFinder.Find(c => c.FullName == type2).FirstOrDefault();
+                        var genericType = typeFinder.Find(c => c.FullName == type2).FirstOrDefault();
 
-                            if (localTriggerType.GetTypeInfo().IsGenericType && localTriggerType.GetGenericArguments().Length == 1)
+                        if (localTriggerType != null && genericType != null)
+                        {
+
+                            if (localTriggerType.GetTypeInfo().IsGenericType
+                                && localTriggerType.GetGenericArguments().Length == 1
+                                && !genericType.IsAbstract && !genericType.IsInterface
+                                )
                             {
                                 var localTriggerGenericType = localTriggerType.GetGenericTypeDefinition().MakeGenericType(genericType);
-                                Trigger(localTriggerGenericType, this, eventArgs);
+
+
+                                if (eventData.Data.TryGetValue(PayloadKey, out var payload))
+                                {
+                                    var payloadObject = (payload as JObject).ToObject(localTriggerGenericType);
+                                    Trigger(localTriggerGenericType, this, (IEventData)payloadObject);
+
+                                }
                             }
                         }
 
 
-                        Trigger(this, new DistributedEventBusHandledEvent(eventArgs));
                     }
                     else
                     {
                         var localTriggerType = typeFinder.Find(c => c.FullName == eventData.Type).FirstOrDefault();
-                        if (localTriggerType != null)
+                        if (localTriggerType != null && !localTriggerType.IsAbstract && !localTriggerType.IsInterface)
                         {
-                            Trigger(localTriggerType, this, eventArgs);
+                            if (eventData.Data.TryGetValue(PayloadKey, out var payload))
+                            {
+                                var payloadObject = (payload as JObject).ToObject(localTriggerType);
+                                Trigger(localTriggerType, this, (IEventData)payloadObject);
+
+                            }
 
                         }
                     }
+                    Trigger(this, new DistributedEventBusHandledEvent(eventArgs));
+
                 }
             }
             catch (Exception ex)

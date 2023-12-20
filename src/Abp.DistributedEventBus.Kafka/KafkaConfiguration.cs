@@ -29,8 +29,8 @@ namespace Abp.DistributedEventBus.Kafka
         public IKafkaConfiguration Configure(IKafkaSetting setting)
         {
             _configuration.IocManager.IocContainer.Register(
-                  Component.For<IDistributedEventPublisher>()
-                     .ImplementedBy<KafkaDistributedEventPublisher>()
+                  Component.For<IDistributedEventProducer>()
+                     .ImplementedBy<KafkaDistributedEventProducer>()
                      .DependsOn(Castle.MicroKernel.Registration.Dependency.OnValue<IKafkaSetting>(setting))
                      .Named(Guid.NewGuid().ToString())
                      .LifestyleSingleton()

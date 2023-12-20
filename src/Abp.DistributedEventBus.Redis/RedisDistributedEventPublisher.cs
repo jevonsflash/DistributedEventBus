@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Abp.DistributedEventBus.Redis
 {
-    public class RedisDistributedEventPublisher : IDistributedEventPublisher
+    public class RedisDistributedEventProducer : IDistributedEventProducer
     {
         private readonly IDatabase _database;
 
@@ -13,7 +13,7 @@ namespace Abp.DistributedEventBus.Redis
         
         private bool _disposed;
 
-        public RedisDistributedEventPublisher(IRedisSetting redisSetting,IDistributedEventSerializer remoteEventSerializer)
+        public RedisDistributedEventProducer(IRedisSetting redisSetting,IDistributedEventSerializer remoteEventSerializer)
         {
             Check.NotNullOrWhiteSpace(redisSetting.Server, "redisSetting.Server");
 

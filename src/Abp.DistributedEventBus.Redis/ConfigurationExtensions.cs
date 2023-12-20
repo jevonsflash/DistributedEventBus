@@ -11,8 +11,8 @@ namespace Abp.DistributedEventBus.Redis
             var iocManager = configuration.AbpStartupConfiguration.IocManager;
             
             iocManager.IocContainer.Register(
-                Component.For<IDistributedEventPublisher>()
-                    .ImplementedBy<RedisDistributedEventPublisher>()
+                Component.For<IDistributedEventProducer>()
+                    .ImplementedBy<RedisDistributedEventProducer>()
                     .LifestyleSingleton()
                     .IsDefault()
             );

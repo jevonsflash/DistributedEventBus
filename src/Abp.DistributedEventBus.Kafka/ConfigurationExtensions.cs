@@ -1,21 +1,22 @@
 ﻿using System;
 using Abp.Dependency;
+using Abp.DistributedEventBus.Kafka;
 using Castle.MicroKernel.Registration;
 
-namespace Abp.DistributedEventBus.RabbitMQ
+namespace Abp.DistributedEventBus.Kafka
 {
     public static class ConfigurationExtensions
     {
-        public static IRabbitMQConfiguration UseRabbitMQ(this IDistributedEventBusConfiguration configuration)
+        public static IKafkaConfiguration UseKafka(this IDistributedEventBusConfiguration configuration)
         {
             var iocManager = configuration.AbpStartupConfiguration.IocManager;
-            
+
             iocManager.IocContainer.Register(
-                Component.For<IDistributedEventPublisher>().ImplementedBy<RabbitMQDistributedEventPublisher>()
+                Component.For<IDistributedEventProducer>().ImplementedBy<KafkaDistributedEventProducer>()
                     .LifestyleSingleton().IsDefault()
             );
             iocManager.IocContainer.Register(
-                Component.For<IDistributedEventSubscriber>().ImplementedBy<RabbitMQDistributedEventSubscriber>()
+                Component.For<IDistributedEventSubscriber>().ImplementedBy<KafkaDistributedEventSubscriber>()
                     .LifestyleSingleton().IsDefault()
             );
             iocManager.IocContainer.Register(
@@ -26,9 +27,9 @@ namespace Abp.DistributedEventBus.RabbitMQ
                     .IsDefault()
             );
 
-            iocManager.RegisterIfNot<IRabbitMQConfiguration, RabbitMQConfiguration>();
+            iocManager.RegisterIfNot<IKafkaConfiguration, KafkaConfiguration>();
 
-            return iocManager.Resolve<IRabbitMQConfiguration>();
+            return iocManager.Resolve<IKafkaConfiguration>();
         }
     }
 }

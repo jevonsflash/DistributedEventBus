@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Abp.DistributedEventBus.Kafka
 {
-    public class KafkaDistributedEventPublisher : IDistributedEventPublisher
+    public class KafkaDistributedEventProducer : IDistributedEventProducer
     {
         public ILogger Logger { get; set; }
 
@@ -17,7 +17,7 @@ namespace Abp.DistributedEventBus.Kafka
 
         private bool _disposed;
 
-        public KafkaDistributedEventPublisher(IKafkaSetting kafkaSetting, IDistributedEventSerializer remoteEventSerializer)
+        public KafkaDistributedEventProducer(IKafkaSetting kafkaSetting, IDistributedEventSerializer remoteEventSerializer)
         {
             Check.NotNullOrWhiteSpace(kafkaSetting.Properties["bootstrap.servers"] as string, "bootstrap.servers");
 

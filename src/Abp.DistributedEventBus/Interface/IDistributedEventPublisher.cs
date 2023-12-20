@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Abp.DistributedEventBus
 {
-    public interface IDistributedEventPublisher: IDisposable
+    public interface IDistributedEventProducer: IDisposable
     {
         void Publish(string topic, IDistributedEventData remoteEventData);
 

@@ -13,7 +13,7 @@ namespace Abp.DistributedEventBus
         public ILogger Logger { get; set; }
 
         private readonly IEventBus _eventBus;
-        private readonly IDistributedEventPublisher _publisher;
+        private readonly IDistributedEventProducer _publisher;
         private readonly IDistributedEventSubscriber _subscriber;
         private readonly IDistributedEventTopicSelector _topicSelector;
         private readonly IDistributedEventSerializer _remoteEventSerializer;
@@ -22,7 +22,7 @@ namespace Abp.DistributedEventBus
 
         public DistributedEventBus(
             IEventBus eventBus,
-            IDistributedEventPublisher publisher,
+            IDistributedEventProducer publisher,
             IDistributedEventSubscriber subscriber,
             IDistributedEventTopicSelector topicSelector,
             IDistributedEventSerializer remoteEventSerializer

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Abp.DistributedEventBus.RabbitMQ
 {
-    public class RabbitMQDistributedEventPublisher : IDistributedEventPublisher
+    public class RabbitMQDistributedEventProducer : IDistributedEventProducer
     {
         private const string _exchangeTopic = "DistributedEventBus.Exchange.Topic";
 
@@ -15,7 +15,7 @@ namespace Abp.DistributedEventBus.RabbitMQ
 
         private bool _disposed;
 
-        public RabbitMQDistributedEventPublisher(
+        public RabbitMQDistributedEventProducer(
             IPoolManager poolManager, 
             IRabbitMQSetting rabbitMQSetting,
             IDistributedEventSerializer remoteEventSerializer
