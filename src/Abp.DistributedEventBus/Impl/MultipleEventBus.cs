@@ -353,7 +353,20 @@ namespace Abp.DistributedEventBus
         {
             var exceptions = new List<Exception>();
             eventData.EventSource = eventSource;
-            TriggerDistributedEventHandlingException(eventType, eventData, exceptions);
+            try
+            {
+                var payloadDictionary = new Dictionary<string, object>
+                        {
+                            { PayloadKey, eventData }
+                        };
+                var distributedeventData = new DistributedEventData(eventType.ToString(), payloadDictionary);
+                Publish(distributedeventData);
+            }
+
+            catch (Exception ex)
+            {
+                exceptions.Add(ex);
+            }
             if (exceptions.Any())
             {
                 if (exceptions.Count == 1)
@@ -477,24 +490,7 @@ namespace Abp.DistributedEventBus
             }
         }
 
-        private void TriggerDistributedEventHandlingException(Type eventType, IEventData eventData, List<Exception> exceptions)
-        {
-
-            try
-            {
-                var payloadDictionary = new Dictionary<string, object>
-                        {
-                            { PayloadKey, eventData }
-                        };
-                var distributedeventData = new DistributedEventData(eventType.ToString(), payloadDictionary);
-                Publish(distributedeventData);
-            }
-
-            catch (Exception ex)
-            {
-                exceptions.Add(ex);
-            }
-        }
+     
 
 
         private async Task TriggerAsyncHandlingException(IEventHandlerFactory asyncHandlerFactory, Type eventType, IEventData eventData, List<Exception> exceptions)

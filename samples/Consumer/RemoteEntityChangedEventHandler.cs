@@ -13,15 +13,6 @@ namespace Consumer
         ITransientDependency
     {
 
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public RemoteEntityChangedEventHandler()
-        {
-
-        }
-
         void IEventHandler<EntityUpdatedEventData<Person>>.HandleEvent(EntityUpdatedEventData<Person> eventData)
         {
             var person = eventData.Entity;

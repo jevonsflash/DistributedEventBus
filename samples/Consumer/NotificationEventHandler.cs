@@ -11,16 +11,6 @@ namespace Consumer
         IEventHandler<NotificationEventData>,      
         ITransientDependency
     {
-
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public NotificationEventHandler()
-        {
-
-        }
-
       
         void IEventHandler<NotificationEventData>.HandleEvent(NotificationEventData eventData)
         {
